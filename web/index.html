@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>AICA Prototype</title>
+  <style>
+    :root {
+      --bg: #f7f9fc;
+      --panel: #ffffff;
+      --border: #d9e2ec;
+      --accent: #4a90e2;
+      --accent-soft: #e3f1ff;
+      --danger: #b33a3a;
+      --radius: 10px;
+      --text: #2e3440;
+      --muted: #556270;
+      --success: #2f855a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    }
+    header {
+      background: linear-gradient(135deg,var(--accent) 0%, #6aa5e8 100%);
+      color: #fff; padding: 1.25rem 2rem; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    header h1 { margin: 0; font-size: 1.35rem; font-weight: 600; letter-spacing: .5px; }
+    main { max-width: 1320px; margin: 2.5rem auto; padding: 0 2rem; }
+    form {
+      background: var(--panel); padding: 2rem 2.25rem; border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      display: grid; gap: 1.35rem; grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    }
+    .field { display: flex; flex-direction: column; gap: .5rem; }
+    .field.wide { grid-column: 1 / -1; }
+    .field-row { display: flex; gap: 1rem; }
+    .field-row .field { flex:1; }
+    form label { font-size: .68rem; font-weight: 600; text-transform: uppercase; color: var(--muted); letter-spacing: .6px; }
+    form textarea, form select, form input { width: 100%; padding: .65rem .75rem; font-size: .85rem; border:1px solid var(--border); border-radius: 6px; background:#fbfdff; }
+    form textarea:focus, form select:focus, form input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+    form button[type=submit] {
+      grid-column: 1 / -1; padding: .9rem 1.2rem; font-size: .95rem; font-weight: 600; border:none;
+      background: var(--accent); color:#fff; border-radius: 8px; cursor:pointer; transition: background .25s ease;
+    }
+    form button[type=submit]:hover { background:#3178c9; }
+    #meta { margin-top: 1.25rem; background: var(--panel); padding: .9rem 1.1rem; border-radius: var(--radius); border:1px solid var(--border); font-size:.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    #result { margin-top: 1.25rem; display:grid; gap:1rem; }
+    .draft { background: var(--panel); border:1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.15rem; position:relative; box-shadow: 0 4px 14px rgba(0,0,0,0.05); }
+    .draft h3 { margin-top:0; font-size:.95rem; letter-spacing:.5px; text-transform:uppercase; font-weight:600; color: var(--muted); }
+    .draft p, .draft pre { font-size: .85rem; line-height: 1.35rem; white-space: pre-wrap; }
+    .draft button { position:absolute; top:.85rem; right:.85rem; background: var(--accent-soft); color: var(--accent); border:none; padding:.4rem .7rem; font-size:.7rem; font-weight:600; border-radius: 20px; cursor:pointer; letter-spacing:.5px; }
+    .draft button:hover { background: var(--accent); color:#fff; }
+    h2 { font-size: 1.05rem; margin: .25rem 0 .35rem; font-weight:600; color: var(--text); }
+    @media (max-width: 640px) {
+      form { grid-template-columns: 1fr; }
+      .draft button { position:static; display:inline-block; margin-top:.5rem; }
+    }
+    .pill { display:inline-block; background: var(--accent-soft); color: var(--accent); padding:.25rem .55rem; border-radius: 14px; font-size:.65rem; font-weight:600; letter-spacing:.5px; margin-right:.4rem; }
+    .pill.ok { background:#e6ffed; color: var(--success); border:1px solid #b7ebc6; }
+    .pill.muted { background:#eef2f7; color:#6b7280; border:1px solid #e5e7eb; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AICA Incident Communications Prototype</h1>
+  </header>
+  <main>
+  <h2>AICA</h2>
+  <form id="form">
+    <div class="field-row">
+      <div class="field">
+        <label for="stage">Stage</label>
+        <select id="stage">
+          <option value="initial">Initial Notice</option>
+          <option value="ongoing" selected>Ongoing Update</option>
+          <option value="resolution">Resolution</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="severity">Severity</label>
+        <select id="severity">
+          <option>SEV1</option>
+          <option>SEV2</option>
+          <option selected>SEV3</option>
+          <option>SEV4</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="mitigation">Mitigation Status</label>
+        <select id="mitigation">
+          <option>investigating</option>
+          <option>mitigating</option>
+          <option>monitoring</option>
+        </select>
+      </div>
+    </div>
+    <div class="field wide">
+      <label for="summary">Incident Summary</label>
+      <textarea id="summary" rows="4" placeholder="Brief incident summary"></textarea>
+    </div>
+    <div class="field">
+      <label for="impact">Impact</label>
+      <input id="impact" placeholder="Affected product/region/customers" />
+    </div>
+    <div class="field">
+      <label for="next_update">Next Update (leave empty for auto)</label>
+      <input id="next_update" placeholder="Auto based on severity" />
+    </div>
+    <button type="submit">Generate Drafts</button>
+  </form>
+
+  <div id="meta"></div>
+  <div id="result"></div>
+  </main>
+
+  <script>
+    const form = document.getElementById('form');
+    const apiBase = 'http://127.0.0.1:8000';
+    
+    function copy(text) {
+      navigator.clipboard.writeText(text);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        stage: document.getElementById('stage').value,
+        summary: document.getElementById('summary').value,
+        severity: document.getElementById('severity').value,
+        impact: document.getElementById('impact').value,
+        mitigation: document.getElementById('mitigation').value,
+        // Leave empty to let server apply severity-based default cadence
+        next_update: document.getElementById('next_update').value || '',
+      };
+      const res = await fetch(`${apiBase}/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      const drafts = data.drafts;
+      const guard = data.guardrails;
+      const exports = data.exports;
+      const meta = data.meta;
+      
+      const metaDiv = document.getElementById('meta');
+      const llmPill = meta.llm_used
+        ? `<span class="pill ok">LLM: OpenAI ${meta.llm_model ? `(${meta.llm_model})` : ''}</span>`
+        : `<span class="pill muted">LLM: Template mode</span>`;
+      metaDiv.innerHTML = `
+        <p>${llmPill}</p>
+        <p><b>Stage:</b> ${meta.stage} &nbsp; <b>Severity:</b> ${meta.severity} &nbsp; <b>Next update:</b> ${meta.next_update}</p>
+      `;
+      const container = document.getElementById('result');
+      container.innerHTML = `
+        <h2>Draft Variants</h2>
+        <div class="draft"><h3>Short</h3><p>${drafts.short}</p><button onclick="navigator.clipboard.writeText('${`${drafts.short}`.replaceAll("'","\\'")}')">Copy</button></div>
+        <div class="draft"><h3>Standard</h3><p>${drafts.standard}</p><button onclick="navigator.clipboard.writeText('${`${drafts.standard}`.replaceAll("'","\\'")}')">Copy</button></div>
+        <div class="draft"><h3>Detailed</h3><p>${drafts.detailed}</p><button onclick="navigator.clipboard.writeText('${`${drafts.detailed}`.replaceAll("'","\\'")}')">Copy</button></div>
+
+        <h2>Exports</h2>
+        <div class="draft"><h3>StatusPage</h3><pre>${exports.statuspage.replace(/</g,'&lt;')}</pre><button onclick="navigator.clipboard.writeText('${exports.statuspage.replaceAll("'","\\'")}')">Copy</button></div>
+        <div class="draft"><h3>Email</h3><pre>${exports.email.replace(/</g,'&lt;')}</pre><button onclick="navigator.clipboard.writeText('${exports.email.replaceAll("'","\\'")}')">Copy</button></div>
+        <h2>Guardrail Notes</h2>
+        <pre>${JSON.stringify(guard.notes, null, 2)}</pre>
+      `;
+    });
+  </script>
+</body>
+</html>
